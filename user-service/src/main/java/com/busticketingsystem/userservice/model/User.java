@@ -2,6 +2,8 @@ package com.busticketingsystem.userservice.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,4 +34,9 @@ public class User
 	private String phoneNumber;
 
 	private String password;
+
+	private Boolean isNotificationEnabled;
+
+	@Enumerated(EnumType.STRING)
+	private NotificationType notificationType;
 }
