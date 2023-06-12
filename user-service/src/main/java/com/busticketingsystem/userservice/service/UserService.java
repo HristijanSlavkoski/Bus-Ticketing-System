@@ -1,5 +1,8 @@
 package com.busticketingsystem.userservice.service;
 
-public interface UserService
-{
+
+import com.busticketingsystem.userservice.dto.SignUpRequest;
+
+public interface UserService {
+    public String signUpUser(SignUpRequest signUpRequest);
 }

@@ -78,5 +78,4 @@ public class CompanyRouteController
 	public CompanyRouteResponse getCheapestRoute(@PathVariable Long routeId) {
 		return companyRouteService.getCheapestRoute(routeId);
 	}
-
 }
