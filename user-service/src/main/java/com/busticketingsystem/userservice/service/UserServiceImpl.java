@@ -2,6 +2,7 @@ package com.busticketingsystem.userservice.service;
 
 import com.busticketingsystem.userservice.dto.KeycloakUser;
 import com.busticketingsystem.userservice.dto.SignUpRequest;
+import com.busticketingsystem.userservice.dto.UserResponse;
 import com.busticketingsystem.userservice.model.User;
 import com.busticketingsystem.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,14 @@ public class UserServiceImpl implements UserService
 		return "Not Register";
 	}
 
+	@Override
+	public UserResponse getUserById(Long id)
+	{
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		return mapToUserResponse(user);
+	}
+
 	private User mapToCompanyRouteResponse(SignUpRequest signUpRequest)
 	{
 		return User.builder()
@@ -59,5 +68,17 @@ public class UserServiceImpl implements UserService
 				.notificationType(signUpRequest.getNotificationType())
 				.password(signUpRequest.getPassword())
 				.isNotificationEnabled(signUpRequest.getIsNotificationEnabled()).build();
+	}
+
+	private UserResponse mapToUserResponse(User user)
+	{
+		return UserResponse.builder()
+				.phoneNumber(user.getPhoneNumber())
+				.id(user.getId())
+				.notificationType(user.getNotificationType())
+				.email(user.getEmail())
+				.isNotificationEnabled(user.getIsNotificationEnabled())
+				.name(user.getName())
+				.build();
 	}
 }

@@ -3,6 +3,7 @@ package com.busticketingsystem.userservice.controller;
 
 import com.busticketingsystem.userservice.dto.LoginRequest;
 import com.busticketingsystem.userservice.dto.SignUpRequest;
+import com.busticketingsystem.userservice.dto.UserResponse;
 import com.busticketingsystem.userservice.service.KeycloakService;
 import com.busticketingsystem.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,5 +53,12 @@ public class UserController
 		LOGGER.info("UserController | login | Http Status Ok");
 
 		return ResponseEntity.ok(accessTokenResponse);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<UserResponse> getUserById(@PathVariable Long id)
+	{
+		UserResponse user = userService.getUserById(id);
+		return ResponseEntity.ok(user);
 	}
 }

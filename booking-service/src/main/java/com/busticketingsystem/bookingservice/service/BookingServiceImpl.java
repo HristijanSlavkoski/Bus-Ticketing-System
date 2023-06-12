@@ -5,11 +5,14 @@ import com.busticketingsystem.bookingservice.dto.BookingResponse;
 import com.busticketingsystem.bookingservice.dto.CompanyRouteResponse;
 import com.busticketingsystem.bookingservice.dto.PaymentRequest;
 import com.busticketingsystem.bookingservice.dto.PaymentResponse;
+import com.busticketingsystem.bookingservice.dto.UserResponse;
+import com.busticketingsystem.bookingservice.event.BookingConfirmedEvent;
 import com.busticketingsystem.bookingservice.model.Booking;
 import com.busticketingsystem.bookingservice.model.BookingStatus;
 import com.busticketingsystem.bookingservice.model.PaymentStatus;
 import com.busticketingsystem.bookingservice.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -23,6 +26,7 @@ public class BookingServiceImpl implements BookingService
 {
 	private final BookingRepository bookingRepository;
 	private final WebClient webClient;
+	private final KafkaTemplate<String, BookingConfirmedEvent> kafkaTemplate;
 
 	@Override
 	public void createBooking(BookingRequest bookingRequest)
@@ -114,8 +118,31 @@ public class BookingServiceImpl implements BookingService
 	public void confirmBooking(Long id)
 	{
 		Booking booking = bookingRepository.findById(id).orElseThrow(() -> new RuntimeException("Booking not found"));
+
 		booking.setStatus(BookingStatus.CONFIRMED);
 		bookingRepository.save(booking);
+
+		UserResponse userResponse = webClient.get()
+				.uri("http://localhost:8084/api/user/" + booking.getUserId())
+				.retrieve()
+				.bodyToMono(UserResponse.class)
+				.block();
+
+		if (userResponse == null)
+		{
+			throw new RuntimeException("User not found");
+		}
+		if (userResponse.getIsNotificationEnabled())
+		{
+			BookingConfirmedEvent event = new BookingConfirmedEvent(
+					booking.getId(),
+					userResponse.getId(),
+					userResponse.getNotificationType(),
+					userResponse.getEmail(),
+					userResponse.getPhoneNumber()
+			);
+			kafkaTemplate.send("Booking completed", event);
+		}
 	}
 
 	@Override
