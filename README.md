@@ -32,9 +32,9 @@
 
 <b>2 )</b> Implement their settings
 
-<b>3 )</b> Download your project from this link `https://github.com/Rapter1990/SpringBootMicroservices`
+<b>3 )</b> Download your project from this link `https://github.com/HristijanSlavkoski/Bus-Ticketing-System.git`
 
-<b>4 )</b> Go to the project's home directory :  `cd SpringBootMicroservices`
+<b>4 )</b> Go to the project's home directory :  `cd Bus-Ticketing-System`
 
 <b>5 )</b> Create a jar file though this command `mvn clean install`
 
